@@ -15,31 +15,40 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
         .container {
             background: #fff;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
+            transform: translateY(-30px);
+            animation: slideUp 0.6s ease-out forwards;
+        }
+        @keyframes slideUp {
+            0% { transform: translateY(-30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
         h1 {
-            font-size: 2rem;
+            font-size: 2.4rem;
             margin-bottom: 20px;
             color: #333;
+            text-transform: uppercase;
         }
         table {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             border-collapse: collapse;
             margin-top: 20px;
         }
         th, td {
-            padding: 12px;
+            padding: 15px;
             border: 1px solid #ddd;
             text-align: center;
+            font-size: 1.2rem;
         }
         th {
             background-color: #f8f9fa;
@@ -62,6 +71,7 @@
             cursor: pointer;
             transition: all 0.3s;
             width: 150px;
+            font-weight: bold;
         }
         button:first-of-type {
             background-color: #28a745;
@@ -93,6 +103,19 @@
             display: none;
             margin-top: 20px;
         }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #28a745;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -108,19 +131,19 @@
             <tbody>
                 <tr>
                     <td>تتر (USDT)</td>
-                    <td id="usdt-price">در حال بارگذاری...</td>
+                    <td id="usdt-price"><div class="spinner"></div></td>
                 </tr>
                 <tr>
                     <td>سولانا (SOL)</td>
-                    <td id="sol-price">در حال بارگذاری...</td>
+                    <td id="sol-price"><div class="spinner"></div></td>
                 </tr>
                 <tr>
                     <td>ترون (TRX)</td>
-                    <td id="trx-price">در حال بارگذاری...</td>
+                    <td id="trx-price"><div class="spinner"></div></td>
                 </tr>
             </tbody>
         </table>
-        
+
         <div class="question" id="question-text" style="display: none;">داری یا نه پسر ؟؟</div>
         <div class="question-buttons" id="question-buttons">
             <button onclick="showMessage('بناااازم! 🌟')">بناااازم</button>
@@ -134,16 +157,25 @@
         // دریافت قیمت‌ها از API نوبیتکس
         async function getCryptoPrices() {
             try {
-                const response = await fetch('https://api.nobitex.ir/v2/market/stats');
-                const data = await response.json();
+                // استفاده از API نوبیتکس برای دریافت قیمت سه ارز
+                const cryptos = ['USDTIRT', 'SOLIRT', 'TRXIRT'];
+                const rates = {};
 
-                const usdtPrice = data.result['USDTIRT'].last;
-                const solPrice = data.result['SOLIRT'].last;
-                const trxPrice = data.result['TRXIRT'].last;
+                for (let i = 0; i < cryptos.length; i++) {
+                    const crypto = cryptos[i];
+                    const response = await fetch(`https://api.nobitex.ir/v2/orderbook/${crypto}`);
+                    const data = await response.json();
+                    if (data && data.asks && data.asks.length > 0) {
+                        rates[crypto] = data.asks[0][0]; // گرفتن قیمت از اولین درخواست خرید
+                    } else {
+                        rates[crypto] = 'نامشخص';
+                    }
+                }
 
-                document.getElementById('usdt-price').textContent = usdtPrice;
-                document.getElementById('sol-price').textContent = solPrice;
-                document.getElementById('trx-price').textContent = trxPrice;
+                // بروزرسانی قیمت‌ها در جدول
+                document.getElementById('usdt-price').textContent = rates['USDTIRT'] || 'خطا در بارگذاری';
+                document.getElementById('sol-price').textContent = rates['SOLIRT'] || 'خطا در بارگذاری';
+                document.getElementById('trx-price').textContent = rates['TRXIRT'] || 'خطا در بارگذاری';
             } catch (error) {
                 console.error('Error fetching prices:', error);
                 document.getElementById('usdt-price').textContent = 'خطا در بارگذاری';
