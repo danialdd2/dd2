@@ -7,70 +7,91 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #333;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            color: #333;
         }
         .container {
-            text-align: center;
             background: #fff;
-            padding: 20px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
             max-width: 500px;
             width: 100%;
         }
         h1 {
             font-size: 2rem;
             margin-bottom: 20px;
+            color: #333;
         }
         table {
             width: 100%;
             margin-bottom: 20px;
             border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
+            margin-top: 20px;
         }
         th, td {
-            padding: 10px;
+            padding: 12px;
+            border: 1px solid #ddd;
             text-align: center;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #555;
+        }
+        td {
+            background-color: #f1f1f1;
         }
         .buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
+            margin-top: 20px;
         }
         button {
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 12px 24px;
+            font-size: 1.2rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            width: 150px;
         }
         button:first-of-type {
-            background: #28a745;
+            background-color: #28a745;
             color: white;
         }
         button:first-of-type:hover {
-            background: #218838;
+            background-color: #218838;
         }
         button:last-of-type {
-            background: #dc3545;
+            background-color: #dc3545;
             color: white;
         }
         button:last-of-type:hover {
-            background: #c82333;
+            background-color: #c82333;
         }
         .message {
             margin-top: 20px;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
+            color: #333;
+        }
+        .question {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-top: 30px;
+            color: #333;
+        }
+        .question-buttons {
+            display: none;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -100,16 +121,17 @@
             </tbody>
         </table>
         
-        <div class="buttons" id="question-buttons" style="display: none;">
+        <div class="question" id="question-text" style="display: none;">داری یا نه پسر ؟؟</div>
+        <div class="question-buttons" id="question-buttons">
             <button onclick="showMessage('بناااازم! 🌟')">بناااازم</button>
             <button onclick="showMessage('نه حاجی جالب نی 😅')">نه حاجی جالب نی</button>
         </div>
-
+        
         <div class="message" id="message"></div>
     </div>
 
     <script>
-        // تابع برای دریافت قیمت ارزها از نوبیتکس
+        // دریافت قیمت‌ها از API نوبیتکس
         async function getCryptoPrices() {
             try {
                 const response = await fetch('https://api.nobitex.ir/v2/market/stats');
@@ -130,23 +152,24 @@
             }
         }
 
-        // تابع برای نمایش پیغام پس از انتخاب گزینه
+        // نمایش پیغام انتخابی
         function showMessage(text) {
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = text;
         }
 
-        // تابع برای پرسیدن سوال از کاربر
+        // نمایش سوال و دکمه‌ها بعد از 10 ثانیه
         function askQuestion() {
             setTimeout(() => {
+                document.getElementById('question-text').style.display = 'block';
                 document.getElementById('question-buttons').style.display = 'flex';
-            }, 10000); // 10 ثانیه پس از ورود
+            }, 10000); // 10 ثانیه تا نمایش سوال
         }
 
-        // فراخوانی توابع پس از بارگذاری صفحه
+        // بارگذاری اولیه صفحه
         window.onload = function() {
-            getCryptoPrices();
-            askQuestion();
+            getCryptoPrices();  // دریافت قیمت‌ها
+            askQuestion();      // پرسیدن سوال بعد از 10 ثانیه
         }
     </script>
 </body>
