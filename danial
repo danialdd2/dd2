@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سوال مهم!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:first-of-type {
+            background: #28a745;
+            color: white;
+        }
+        button:first-of-type:hover {
+            background: #218838;
+        }
+        button:last-of-type {
+            background: #dc3545;
+            color: white;
+        }
+        button:last-of-type:hover {
+            background: #c82333;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>داری یا نه؟</h1>
+        <div class="buttons">
+            <button onclick="showMessage('بنااازم! 🌟')">بنااازم</button>
+            <button onclick="showMessage('نه حاجی جالب نی 😅')">نه حاجی جالب نی</button>
+        </div>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        function showMessage(text) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+        }
+    </script>
+</body>
+</html>
