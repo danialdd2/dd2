@@ -21,10 +21,24 @@
             padding: 20px 40px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
         }
         h1 {
             font-size: 2rem;
             margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
         }
         .buttons {
             display: flex;
@@ -62,18 +76,77 @@
 </head>
 <body>
     <div class="container">
-        <h1>داری یا نه؟</h1>
-        <div class="buttons">
-            <button onclick="showMessage('بنااازم! 🌟')">بنااازم</button>
+        <h1>قیمت لحظه‌ای ارزهای دیجیتال</h1>
+        <table id="crypto-table">
+            <thead>
+                <tr>
+                    <th>ارز</th>
+                    <th>قیمت</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>تتر (USDT)</td>
+                    <td id="usdt-price">در حال بارگذاری...</td>
+                </tr>
+                <tr>
+                    <td>سولانا (SOL)</td>
+                    <td id="sol-price">در حال بارگذاری...</td>
+                </tr>
+                <tr>
+                    <td>ترون (TRX)</td>
+                    <td id="trx-price">در حال بارگذاری...</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="buttons" id="question-buttons" style="display: none;">
+            <button onclick="showMessage('بناااازم! 🌟')">بناااازم</button>
             <button onclick="showMessage('نه حاجی جالب نی 😅')">نه حاجی جالب نی</button>
         </div>
+
         <div class="message" id="message"></div>
     </div>
 
     <script>
+        // تابع برای دریافت قیمت ارزها از نوبیتکس
+        async function getCryptoPrices() {
+            try {
+                const response = await fetch('https://api.nobitex.ir/v2/market/stats');
+                const data = await response.json();
+
+                const usdtPrice = data.result['USDTIRT'].last;
+                const solPrice = data.result['SOLIRT'].last;
+                const trxPrice = data.result['TRXIRT'].last;
+
+                document.getElementById('usdt-price').textContent = usdtPrice;
+                document.getElementById('sol-price').textContent = solPrice;
+                document.getElementById('trx-price').textContent = trxPrice;
+            } catch (error) {
+                console.error('Error fetching prices:', error);
+                document.getElementById('usdt-price').textContent = 'خطا در بارگذاری';
+                document.getElementById('sol-price').textContent = 'خطا در بارگذاری';
+                document.getElementById('trx-price').textContent = 'خطا در بارگذاری';
+            }
+        }
+
+        // تابع برای نمایش پیغام پس از انتخاب گزینه
         function showMessage(text) {
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = text;
+        }
+
+        // تابع برای پرسیدن سوال از کاربر
+        function askQuestion() {
+            setTimeout(() => {
+                document.getElementById('question-buttons').style.display = 'flex';
+            }, 10000); // 10 ثانیه پس از ورود
+        }
+
+        // فراخوانی توابع پس از بارگذاری صفحه
+        window.onload = function() {
+            getCryptoPrices();
+            askQuestion();
         }
     </script>
 </body>
