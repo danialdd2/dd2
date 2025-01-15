@@ -3,176 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سوال مهم!</title>
+    <title>قیمت ارزها</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            color: #333;
-            margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #333;
         }
         .container {
-            background: #fff;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 600px;
-            width: 100%;
-            transform: translateY(-30px);
-            animation: slideUp 0.6s ease-out forwards;
-        }
-        @keyframes slideUp {
-            0% { transform: translateY(-30px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            font-size: 2.4rem;
+            font-size: 2rem;
             margin-bottom: 20px;
-            color: #333;
-            text-transform: uppercase;
         }
-        table {
-            width: 100%;
-            margin-bottom: 30px;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 15px;
-            border: 1px solid #ddd;
-            text-align: center;
-            font-size: 1.2rem;
-        }
-        th {
-            background-color: #f8f9fa;
-            color: #555;
-        }
-        td {
-            background-color: #f1f1f1;
+        .prices {
+            margin: 20px 0;
+            font-size: 1.5rem;
         }
         .buttons {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
             margin-top: 20px;
         }
         button {
-            padding: 12px 24px;
-            font-size: 1.2rem;
+            padding: 10px 20px;
+            font-size: 1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
-            width: 150px;
-            font-weight: bold;
+            transition: background 0.3s;
         }
         button:first-of-type {
-            background-color: #28a745;
+            background: #28a745;
             color: white;
         }
         button:first-of-type:hover {
-            background-color: #218838;
+            background: #218838;
         }
         button:last-of-type {
-            background-color: #dc3545;
+            background: #dc3545;
             color: white;
         }
         button:last-of-type:hover {
-            background-color: #c82333;
+            background: #c82333;
         }
         .message {
             margin-top: 20px;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #333;
-        }
-        .question {
-            font-size: 1.6rem;
-            font-weight: bold;
-            margin-top: 30px;
-            color: #333;
-        }
-        .question-buttons {
-            display: none;
-            margin-top: 20px;
-        }
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #28a745;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>قیمت لحظه‌ای ارزهای دیجیتال</h1>
-        <table id="crypto-table">
-            <thead>
-                <tr>
-                    <th>ارز</th>
-                    <th>قیمت</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>تتر (USDT)</td>
-                    <td id="usdt-price"><div class="spinner"></div></td>
-                </tr>
-                <tr>
-                    <td>سولانا (SOL)</td>
-                    <td id="sol-price"><div class="spinner"></div></td>
-                </tr>
-                <tr>
-                    <td>ترون (TRX)</td>
-                    <td id="trx-price"><div class="spinner"></div></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="question" id="question-text" style="display: none;">داری یا نه پسر ؟؟</div>
-        <div class="question-buttons" id="question-buttons">
-            <button onclick="showMessage('بناااازم! 🌟')">بناااازم</button>
-            <button onclick="showMessage('نه حاجی جالب نی 😅')">نه حاجی جالب نی</button>
+        <h1>قیمت لحظه‌ای ارزها</h1>
+        <div class="prices">
+            <p>تتر: <span id="usdt-price">در حال بارگذاری...</span></p>
+            <p>سولانا: <span id="sol-price">در حال بارگذاری...</span></p>
+            <p>ترون: <span id="trx-price">در حال بارگذاری...</span></p>
         </div>
-        
         <div class="message" id="message"></div>
+        <div class="buttons" id="buttons">
+            <!-- دکمه‌ها پس از 10 ثانیه ظاهر می‌شوند -->
+        </div>
     </div>
 
     <script>
-        // دریافت قیمت‌ها از API نوبیتکس
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const apiUrl = 'https://api.nobitex.ir/v2/orderbook/';
+        const cryptos = ['USDTIRT', 'SOLIRT', 'TRXIRT'];
+
+        // دریافت قیمت ارزها از نوبیتکس
         async function getCryptoPrices() {
             try {
-                // استفاده از API نوبیتکس برای دریافت قیمت سه ارز
-                const cryptos = ['USDTIRT', 'SOLIRT', 'TRXIRT'];
                 const rates = {};
 
                 for (let i = 0; i < cryptos.length; i++) {
                     const crypto = cryptos[i];
-                    const response = await fetch(`https://api.nobitex.ir/v2/orderbook/${crypto}`);
+                    const response = await fetch(proxyUrl + apiUrl + crypto);
                     const data = await response.json();
+
                     if (data && data.asks && data.asks.length > 0) {
-                        rates[crypto] = data.asks[0][0]; // گرفتن قیمت از اولین درخواست خرید
+                        rates[crypto] = data.asks[0][0];
                     } else {
                         rates[crypto] = 'نامشخص';
                     }
                 }
 
-                // بروزرسانی قیمت‌ها در جدول
                 document.getElementById('usdt-price').textContent = rates['USDTIRT'] || 'خطا در بارگذاری';
                 document.getElementById('sol-price').textContent = rates['SOLIRT'] || 'خطا در بارگذاری';
                 document.getElementById('trx-price').textContent = rates['TRXIRT'] || 'خطا در بارگذاری';
@@ -184,25 +112,27 @@
             }
         }
 
-        // نمایش پیغام انتخابی
-        function showMessage(text) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = text;
-        }
-
-        // نمایش سوال و دکمه‌ها بعد از 10 ثانیه
-        function askQuestion() {
+        // نمایش دکمه‌ها بعد از 10 ثانیه
+        function showButtons() {
             setTimeout(() => {
-                document.getElementById('question-text').style.display = 'block';
-                document.getElementById('question-buttons').style.display = 'flex';
-            }, 10000); // 10 ثانیه تا نمایش سوال
+                document.getElementById('message').textContent = 'داری یا نه پسر؟';
+                document.getElementById('buttons').innerHTML = `
+                    <button onclick="showMessage('بناااازم! 🌟')">بناااازم</button>
+                    <button onclick="showMessage('نه حاجی جالب نی 😅')">نه حاجی جالب نی</button>
+                `;
+            }, 10000);  // 10 ثانیه
         }
 
-        // بارگذاری اولیه صفحه
-        window.onload = function() {
-            getCryptoPrices();  // دریافت قیمت‌ها
-            askQuestion();      // پرسیدن سوال بعد از 10 ثانیه
+        // نمایش پیام پس از انتخاب دکمه
+        function showMessage(text) {
+            document.getElementById('message').textContent = text;
         }
+
+        // بارگذاری قیمت‌ها و نمایش دکمه‌ها
+        window.onload = () => {
+            getCryptoPrices();
+            showButtons();
+        };
     </script>
 </body>
 </html>
